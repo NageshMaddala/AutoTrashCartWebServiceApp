@@ -62,5 +62,27 @@ namespace AutoTrashCartWebServiceApp.Controllers
 
             return BadRequest("Something went wrong!");
         }
+
+        [Route("GetSync")]
+        public Sync GetSync(string token)
+        {
+            return _autoTrashCartRepository.GetSync(token);
+        }
+
+        [Route("SetSync")]
+        public IHttpActionResult SetSync(Sync sync)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            bool response = _autoTrashCartRepository.SetSync(sync.Token, sync.Schedule, sync.Path);
+
+            if (response)
+                return Ok();
+
+            return BadRequest("Something went wrong!");
+        }
     }
 }

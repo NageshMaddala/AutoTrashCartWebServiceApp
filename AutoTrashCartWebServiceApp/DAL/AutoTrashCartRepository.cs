@@ -133,12 +133,25 @@ namespace AutoTrashCartWebServiceApp.DAL
 
         public Sync GetSync(string token)
         {
-            throw new NotImplementedException();
+            var schedule = GetSchedule(token);
+
+            var path = GetPath(token);
+
+            Sync sync = new Sync();
+
+            if (schedule != null || path != null)
+                sync = new Sync(token, schedule, path);
+
+            return sync;
         }
 
         public bool SetSync(string token, Schedule schedule, Path path)
         {
-            throw new NotImplementedException();
+            SetSchedule(schedule);
+
+            SetPath(path.Token, path.S, path.E, path.Leftb, path.Rightb, path.Centerl, path.So, path.Eo);
+
+            return true;
         }
     }
 }
