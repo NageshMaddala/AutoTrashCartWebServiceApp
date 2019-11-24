@@ -3,3 +3,9 @@
 ################################################################################
 
 /AutoTrashCartWebServiceApp/.vs/AutoTrashCartWebServiceApp/v16
+/.vs
+/AutoTrashCartWebServiceApp/.vs/AutoTrashCartWebServiceApp/config
+/AutoTrashCartWebServiceApp/bin
+/AutoTrashCartWebServiceApp/obj/Debug
+/AutoTrashCartWebServiceApp/packages
+/AutoTrashCartWebServiceApp/AutoTrashCartWebServiceApp.csproj.user
