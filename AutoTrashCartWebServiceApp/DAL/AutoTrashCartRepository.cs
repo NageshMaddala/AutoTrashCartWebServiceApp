@@ -26,7 +26,10 @@ namespace AutoTrashCartWebServiceApp.DAL
         public bool SetSchedule(Schedule schedule)
         {
             int rowsAffected = _db.Execute(
-                @"INSERT INTO [dbo].[Schedule] ([Token],[Day],[Pickup],[Holidays]) VALUES (@Token, @Day, @Pickup, @Holidays)",
+                @"IF EXISTS (SELECT TOP 1 * FROM [DBO].[SCHEDULE] WHERE TOKEN = @Token)
+                        UPDATE [DBO].[SCHEDULE] SET [Day] = @Day, [Pickup] = @Pickup, [Holidays] = @Holidays WHERE Token = @Token
+                     ELSE
+                        INSERT INTO [DBO].[SCHEDULE] ([Token],[Day],[Pickup],[Holidays]) VALUES (@Token, @Day, @Pickup, @Holidays)",
                 new
                 {
                     Token = schedule.Token,
@@ -45,9 +48,9 @@ namespace AutoTrashCartWebServiceApp.DAL
 
         public Path GetPath(string token)
         {
-            var location = _db.Query<Location>("Select * from [Location] where Token=" + token).ToArray<Location>();
+            var location = _db.Query<Location>("SELECT * FROM [LOCATION] WHERE TOKEN =" + token).ToArray<Location>();
 
-            var orientation = _db.Query<Orientation>("Select * from [Orientation] where Token=" + token).ToArray<Orientation>();
+            var orientation = _db.Query<Orientation>("SELECT * FROM [ORIENTATION] WHERE TOKEN =" + token).ToArray<Orientation>();
 
             var path = new Path(token, location, orientation);
 
@@ -73,15 +76,19 @@ namespace AutoTrashCartWebServiceApp.DAL
             if (points.Length > 0)
             {
                 int insertOrientation = _db.Execute(
-                                    @"INSERT INTO [dbo].[Orientation] ([Token],[OrientationType],[X],[Y],[Z]) VALUES (@Token, @OrientationType, @X, @Y, @Z)",
-                                    new
-                                    {
-                                        Token = token,
-                                        OrientationType = keyword,
-                                        X = points[0],
-                                        Y = points[1],
-                                        Z = points[2]
-                                    });
+                    @"IF EXISTS (SELECT TOP 1 * FROM [DBO].[ORIENTATION] WHERE Token = @Token AND [OrientationType] = @OrientationType)
+						 UPDATE [DBO].[ORIENTATION] SET [OrientationType] = @OrientationType, [X] = @X, [Y] = @Y, [Z] = @Z 
+                         WHERE Token = @Token AND [OrientationType] = @OrientationType
+					ELSE
+						 INSERT INTO [DBO].[ORIENTATION] ([Token],[OrientationType],[X],[Y],[Z]) VALUES (@Token, @OrientationType, @X, @Y, @Z)",
+                    new
+                    {
+                        Token = token,
+                        OrientationType = keyword,
+                        X = points[0],
+                        Y = points[1],
+                        Z = points[2]
+                    });
             }
         }
 
@@ -92,7 +99,11 @@ namespace AutoTrashCartWebServiceApp.DAL
             if (points.Length > 0)
             {
                 int insertStartingPoints = _db.Execute(
-                    @"INSERT INTO [dbo].[Location]([Token],[LocationType],[Latitude0],[Longitude0]) VALUES (@Token, @LocationType, @Latitude0, @Longitude0)",
+                    @"IF EXISTS (SELECT TOP 1 * FROM [DBO].[LOCATION] WHERE Token = @Token AND [LocationType] = @LocationType)
+						UPDATE [dbo].[Location] SET [LocationType] = @LocationType,[Latitude0] = @Latitude0,[Longitude0] = @Longitude0
+                        WHERE Token = @Token AND [LocationType] = @LocationType
+					ELSE
+						INSERT INTO [dbo].[Location]([Token],[LocationType],[Latitude0],[Longitude0]) VALUES (@Token, @LocationType, @Latitude0, @Longitude0)",
                     new
                     {
                         Token = token,
@@ -116,7 +127,11 @@ namespace AutoTrashCartWebServiceApp.DAL
             string[] point2 = points[2].Split(',').ToArray();
 
             int insertStartingPoints = _db.Execute(
-                @"INSERT INTO [dbo].[Location]([Token],[LocationType],[Latitude0],[Longitude0],[Latitude1],[Longitude1],[Latitude2],[Longitude2]) 
+                @"IF EXISTS (SELECT TOP 1 * FROM [DBO].[LOCATION] WHERE Token = @Token AND [LocationType] = @LocationType)
+						UPDATE [LOCATION] SET [LocationType] = @LocationType,[Latitude0] = @Latitude0,[Longitude0] = @Longitude0,[Latitude1] = @Latitude1,[Longitude1] = @Longitude1, [Latitude2] = @Latitude2,[Longitude2] = @Longitude2
+                        WHERE Token = @Token AND [LocationType] = @LocationType
+					ELSE
+						INSERT INTO [dbo].[Location]([Token],[LocationType],[Latitude0],[Longitude0],[Latitude1],[Longitude1],[Latitude2],[Longitude2]) 
                     VALUES (@Token, @LocationType, @Latitude0, @Longitude0, @Latitude1, @Longitude1, @Latitude2, @Longitude2)",
                 new
                 {
