@@ -230,6 +230,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AutoTrashCartController.cs" />
+    <Compile Include="Controllers\AutoTrashCartMobileController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="DAL\AutoTrashCartRepository.cs" />
