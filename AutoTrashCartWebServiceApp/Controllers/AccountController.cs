@@ -1,21 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.ModelBinding;
+using AutoTrashCartWebServiceApp.Models;
+using AutoTrashCartWebServiceApp.Providers;
+using AutoTrashCartWebServiceApp.Results;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
-using AutoTrashCartWebServiceApp.Models;
-using AutoTrashCartWebServiceApp.Providers;
-using AutoTrashCartWebServiceApp.Results;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace AutoTrashCartWebServiceApp.Controllers
 {
@@ -101,7 +106,7 @@ namespace AutoTrashCartWebServiceApp.Controllers
                 logins.Add(new UserLoginInfoViewModel
                 {
                     LoginProvider = LocalLoginProvider,
-                    ProviderKey = user.UserName,
+                    ProviderKey = user.UserName
                 });
             }
 
@@ -125,7 +130,7 @@ namespace AutoTrashCartWebServiceApp.Controllers
 
             IdentityResult result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword,
                 model.NewPassword);
-            
+
             if (!result.Succeeded)
             {
                 return GetErrorResult(result);
@@ -258,9 +263,9 @@ namespace AutoTrashCartWebServiceApp.Controllers
             if (hasRegistered)
             {
                 Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-                
-                 ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
-                    OAuthDefaults.AuthenticationType);
+
+                ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
+                   OAuthDefaults.AuthenticationType);
                 ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
                     CookieAuthenticationDefaults.AuthenticationType);
 
@@ -308,7 +313,7 @@ namespace AutoTrashCartWebServiceApp.Controllers
                         response_type = "token",
                         client_id = Startup.PublicClientId,
                         redirect_uri = new Uri(Request.RequestUri, returnUrl).AbsoluteUri,
-                        state = state
+                        state
                     }),
                     State = state
                 };
@@ -328,7 +333,7 @@ namespace AutoTrashCartWebServiceApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 
@@ -338,6 +343,77 @@ namespace AutoTrashCartWebServiceApp.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("ForgotPassword")]
+        public async Task<IHttpActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await UserManager.FindByNameAsync(model.Email);
+                if (user == null)
+                {
+                    return Ok();
+                }
+                var code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Link("Default", new { Controller = "Admin", Action = "ResetPassword", code });
+                //await UserManager.SendEmailAsync(user.Id, "Reset Password", $"{callbackUrl}");
+                await SendEmail(model.Email, callbackUrl);
+                return Content(HttpStatusCode.OK, callbackUrl);
+            }
+            return BadRequest(ModelState);
+        }
+
+        private async Task SendEmail(string toEmail, string pwdLink)
+        {
+            var apiKey = "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";
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress("admin@autoTrashCart.com", "Admin");
+            List<EmailAddress> tos = new List<EmailAddress>
+            {
+                new EmailAddress(toEmail, toEmail)
+            };
+
+            var subject = "AutoTrashCart Account - Password Reset Link";
+            var htmlContent = "<strong>We just received a request password reset from your AutoTrashCart account</strong> <p> To reset your password, just click this link " + pwdLink + ".";
+
+            var msg = MailHelper.CreateSingleEmailToMultipleRecipients(from, tos, subject, "", htmlContent, false);
+            await client.SendEmailAsync(msg);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("ResetPassword")]
+        public async Task<IHttpActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = await UserManager.FindByNameAsync(model.Email);
+
+            if (user == null)
+            {
+                return Content(HttpStatusCode.NotFound, "User Not Found!");
+            }
+
+            var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
+
+            var error = new Error();
+
+            error.Message = result.Errors.ToList().FirstOrDefault();
+
+            //return Content(HttpStatusCode.BadRequest, error);
+
+            //return ResponseMessage(Request.CreateErrorResponse(HttpStatusCode.BadRequest, error.Message));
+
+            return BadRequest(error.Message);
         }
 
         // POST api/Account/RegisterExternal
@@ -357,7 +433,7 @@ namespace AutoTrashCartWebServiceApp.Controllers
                 return InternalServerError();
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
 
             IdentityResult result = await UserManager.CreateAsync(user);
             if (!result.Succeeded)
@@ -368,7 +444,7 @@ namespace AutoTrashCartWebServiceApp.Controllers
             result = await UserManager.AddLoginAsync(user.Id, info.Login);
             if (!result.Succeeded)
             {
-                return GetErrorResult(result); 
+                return GetErrorResult(result);
             }
             return Ok();
         }
@@ -491,4 +567,32 @@ namespace AutoTrashCartWebServiceApp.Controllers
 
         #endregion
     }
+
+    public class ErrorResult : IHttpActionResult
+    {
+        Error _error;
+        HttpRequestMessage _request;
+
+        public ErrorResult(Error error, HttpRequestMessage request)
+        {
+            _error = error;
+            _request = request;
+        }
+        public Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
+        {
+            var response = new HttpResponseMessage()
+            {
+                Content = new ObjectContent<Error>(_error, new JsonMediaTypeFormatter()),
+                RequestMessage = _request
+            };
+            return Task.FromResult(response);
+        }
+    }
+
+    public class Error
+    {
+        public string Status { get; set; }
+        public string Message { get; set; }
+    }
+
 }
