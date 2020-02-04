@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Web.Http;
+﻿using System.Web.Http;
+using System.Web.Http.ExceptionHandling;
+using AutoTrashCartWebServiceApp.CustomHandler;
 using Microsoft.Owin.Security.OAuth;
-using Newtonsoft.Json.Serialization;
 
 namespace AutoTrashCartWebServiceApp
 {
@@ -20,6 +17,14 @@ namespace AutoTrashCartWebServiceApp
 
             // Web API routes
             config.MapHttpAttributeRoutes();
+
+            //Registering GlobalExceptionHandler
+            config.Services.Replace(typeof(IExceptionHandler), new GlobalExceptionHandler());
+            //Registering UnhandledExceptionLogger
+            config.Services.Replace(typeof(IExceptionLogger), new UnhandledExceptionLogger());
+
+            //Registering RequestResponseHandler
+            config.MessageHandlers.Add(new RequestResponseHandler());
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",

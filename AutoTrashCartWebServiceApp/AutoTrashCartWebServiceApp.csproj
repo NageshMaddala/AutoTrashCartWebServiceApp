@@ -277,6 +277,9 @@
     <Compile Include="Controllers\AutoTrashCartMobileController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="CustomHandler\GlobalExceptionHandler.cs" />
+    <Compile Include="CustomHandler\RequestResponseHandler.cs" />
+    <Compile Include="CustomHandler\UnhandledExceptionLogger.cs" />
     <Compile Include="DAL\AutoTrashCartRepository.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -284,6 +287,9 @@
     <Compile Include="Interfaces\IAutoTrashCartRepository.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AutoTrashCartAPIError.cs" />
+    <Compile Include="Models\AutoTrashCartApiLog.cs" />
+    <Compile Include="Models\AutoTrashCartApiLogging.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\Orientation.cs" />

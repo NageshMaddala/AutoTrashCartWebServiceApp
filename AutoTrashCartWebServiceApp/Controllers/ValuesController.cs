@@ -7,13 +7,13 @@ using System.Web.Http;
 
 namespace AutoTrashCartWebServiceApp.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class ValuesController : ApiController
     {
         // GET api/values
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            throw new NotImplementedException("hey testing!");
         }
 
         // GET api/values/5

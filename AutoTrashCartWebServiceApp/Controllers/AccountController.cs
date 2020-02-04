@@ -342,7 +342,7 @@ namespace AutoTrashCartWebServiceApp.Controllers
                 return GetErrorResult(result);
             }
 
-            return Ok();
+            return Content(HttpStatusCode.OK, "Successfully Registered!.");
         }
 
         [HttpPost]
@@ -368,7 +368,7 @@ namespace AutoTrashCartWebServiceApp.Controllers
 
         private async Task SendEmail(string toEmail, string pwdLink)
         {
-            var apiKey = "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";
+            var apiKey = "";
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("admin@autoTrashCart.com", "Admin");
             List<EmailAddress> tos = new List<EmailAddress>
