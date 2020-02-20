@@ -20,9 +20,9 @@ namespace AutoTrashCartWebServiceApp.Controllers
         }
 
         [Route("GetSchedule")]
-        public Schedule GetSchedule(string token)
+        public Schedule GetSchedule(string scheduleId)
         {
-            return _autoTrashCartRepository.GetSchedule(token);
+            return _autoTrashCartRepository.GetSchedule(scheduleId);
         }
 
         [Route("SetSchedule")]
@@ -42,9 +42,9 @@ namespace AutoTrashCartWebServiceApp.Controllers
         }
 
         [Route("GetPath")]
-        public Path GetPath(string token)
+        public Path GetPath(string pathId)
         {
-            return _autoTrashCartRepository.GetPath(token);
+            return _autoTrashCartRepository.GetPath(pathId);
         }
 
         [Route("SetPath")]
@@ -55,7 +55,7 @@ namespace AutoTrashCartWebServiceApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            bool response = _autoTrashCartRepository.SetPath(path.Token, path.S, path.E, path.Leftb, path.Rightb, path.Centerl, path.So, path.Eo);
+            bool response = _autoTrashCartRepository.SetPath(path.PathId, path.S, path.E, path.Leftb, path.Rightb, path.Centerl, path.So, path.Eo);
 
             if (response)
                 return Ok();
@@ -64,9 +64,9 @@ namespace AutoTrashCartWebServiceApp.Controllers
         }
 
         [Route("GetSync")]
-        public Sync GetSync(string token)
+        public Sync GetSync(string syncId)
         {
-            return _autoTrashCartRepository.GetSync(token);
+            return _autoTrashCartRepository.GetSync(syncId);
         }
 
         [Route("SetSync")]
@@ -77,7 +77,7 @@ namespace AutoTrashCartWebServiceApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            bool response = _autoTrashCartRepository.SetSync(sync.Token, sync.Schedule, sync.Path);
+            bool response = _autoTrashCartRepository.SetSync(sync.SyncId, sync.Schedule, sync.Path);
 
             if (response)
                 return Ok();

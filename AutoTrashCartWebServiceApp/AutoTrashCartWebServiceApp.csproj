@@ -276,7 +276,7 @@
     <Compile Include="Controllers\AutoTrashCartController.cs" />
     <Compile Include="Controllers\AutoTrashCartMobileController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Controllers\AutoTrashCartAdminController.cs" />
     <Compile Include="CustomHandler\GlobalExceptionHandler.cs" />
     <Compile Include="CustomHandler\RequestResponseHandler.cs" />
     <Compile Include="CustomHandler\UnhandledExceptionLogger.cs" />
@@ -308,9 +308,13 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Database\AutoTrashCartAPIError.sql" />
+    <Content Include="Database\AutoTrashCartAPILog.sql" />
     <Content Include="Database\Location.sql" />
     <Content Include="Database\Orientation.sql" />
     <Content Include="Database\Schedule.sql" />
+    <Content Include="Database\Stored Procedures\Sp_AutoTrashCartAPI_ErrorLogging.sql" />
+    <Content Include="Database\Stored Procedures\Sp_AutoTrashCartAPI_Logging.sql" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

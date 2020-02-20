@@ -4,8 +4,8 @@ namespace AutoTrashCartWebServiceApp.Models
 {
     public class Sync
     {
-        [JsonProperty(PropertyName = "token")]
-        public string Token { get; set; }
+        [JsonProperty(PropertyName = "syncId")]
+        public string SyncId { get; set; }
 
         public Schedule Schedule { get; set; }
 
@@ -17,7 +17,7 @@ namespace AutoTrashCartWebServiceApp.Models
 
         public Sync(string token, Schedule schedule, Path path)
         {
-            Token = token;
+            SyncId = token;
             Schedule = schedule;
             Path = path;
         }

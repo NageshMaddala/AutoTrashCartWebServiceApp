@@ -2,7 +2,7 @@
 {
     public class Location
     {
-        public string Token { get; set; }
+        public string LocationId { get; set; }
         public string LocationType { get; set; }
         public decimal Latitude0 { get; set; }
         public decimal Longitude0 { get; set; }

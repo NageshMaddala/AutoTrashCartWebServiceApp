@@ -1,4 +1,5 @@
-﻿using AutoTrashCartWebServiceApp.Models;
+﻿using System.Collections.Generic;
+using AutoTrashCartWebServiceApp.Models;
 
 namespace AutoTrashCartWebServiceApp.Interfaces
 {
@@ -6,14 +7,18 @@ namespace AutoTrashCartWebServiceApp.Interfaces
     {
         bool SetSchedule(Schedule schedule);
 
-        bool SetPath(string token, string s, string e, string[] leftb, string[] rightb, string[] centerl, string so, string eo);
+        bool SetPath(string pathId, string s, string e, string[] leftb, string[] rightb, string[] centerl, string so, string eo);
 
-        Schedule GetSchedule(string token);
+        Schedule GetSchedule(string scheduleId);
 
-        Path GetPath(string token);
+        Path GetPath(string pathId);
 
         bool SetSync(string token, Schedule schedule, Path path);
 
         Sync GetSync(string token);
+
+        IEnumerable<AutoTrashCartApiLog> GetApplicationLogs();
+
+        IEnumerable<AutoTrashCartApiError> GetApplicationErrors();
     }
 }

@@ -40,7 +40,7 @@ namespace AutoTrashCartWebServiceApp.Models
             }
             catch (Exception)
             {
-                throw;
+                //throw;
             }
         }
     }

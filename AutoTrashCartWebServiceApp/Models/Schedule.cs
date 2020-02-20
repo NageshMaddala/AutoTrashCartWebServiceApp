@@ -4,8 +4,8 @@ namespace AutoTrashCartWebServiceApp.Models
 {
     public class Schedule
     {
-        [JsonProperty(PropertyName = "token")]
-        public string Token { get; set; }
+        [JsonProperty(PropertyName = "scheduleId")]
+        public string ScheduleId { get; set; }
         public int Day { get; set; }
         public System.TimeSpan Pickup { get; set; }
         public bool Holidays { get; set; }

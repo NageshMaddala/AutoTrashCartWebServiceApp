@@ -6,8 +6,8 @@ namespace AutoTrashCartWebServiceApp.Models
 {
     public class Path
     {
-        [JsonProperty(PropertyName = "token")]
-        public string Token { get; set; }
+        [JsonProperty(PropertyName = "pathId")]
+        public string PathId { get; set; }
 
         [JsonProperty(PropertyName = "s")]
         public string S { get; set; }
@@ -35,9 +35,9 @@ namespace AutoTrashCartWebServiceApp.Models
 
         }
 
-        public Path(string token, Location[] location, Orientation[] orientation)
+        public Path(string pathId, Location[] location, Orientation[] orientation)
         {
-            Token = token;
+            PathId = pathId;
             var spoint = location.FirstOrDefault(l => l.LocationType.Trim() == "s");
 
             if (spoint != null)
