@@ -1,10 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace AutoTrashCartWebServiceApp.Models
 {
     public class Sync
     {
         [JsonProperty(PropertyName = "syncId")]
+        [Required]
         public string SyncId { get; set; }
 
         public Schedule Schedule { get; set; }

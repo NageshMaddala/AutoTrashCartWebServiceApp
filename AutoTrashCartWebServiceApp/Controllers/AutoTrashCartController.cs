@@ -4,8 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using AutoTrashCartWebServiceApp.Filters;
 using AutoTrashCartWebServiceApp.Interfaces;
 using AutoTrashCartWebServiceApp.Models;
+using Swashbuckle.Swagger.Annotations;
 
 namespace AutoTrashCartWebServiceApp.Controllers
 {
@@ -20,19 +22,17 @@ namespace AutoTrashCartWebServiceApp.Controllers
         }
 
         [Route("GetSchedule")]
-        public Schedule GetSchedule(string scheduleId)
+        [SwaggerResponse(HttpStatusCode.OK, Type = typeof(Schedule))]
+        public IHttpActionResult GetSchedule(string scheduleId)
         {
-            return _autoTrashCartRepository.GetSchedule(scheduleId);
+            var schedule = _autoTrashCartRepository.GetSchedule(scheduleId);
+            return Ok(schedule);
         }
 
         [Route("SetSchedule")]
+        [ValidateModelState]
         public IHttpActionResult SetSchedule(Schedule schedule)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             bool response = _autoTrashCartRepository.SetSchedule(schedule);
 
             if (response)
@@ -42,19 +42,17 @@ namespace AutoTrashCartWebServiceApp.Controllers
         }
 
         [Route("GetPath")]
-        public Path GetPath(string pathId)
+        [SwaggerResponse(HttpStatusCode.OK, Type = typeof(Path))]
+        public IHttpActionResult GetPath(string pathId)
         {
-            return _autoTrashCartRepository.GetPath(pathId);
+            var path = _autoTrashCartRepository.GetPath(pathId);
+            return Ok(path);
         }
 
         [Route("SetPath")]
+        [ValidateModelState]
         public IHttpActionResult SetPath(Path path)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             bool response = _autoTrashCartRepository.SetPath(path.PathId, path.S, path.E, path.Leftb, path.Rightb, path.Centerl, path.So, path.Eo);
 
             if (response)
@@ -64,19 +62,17 @@ namespace AutoTrashCartWebServiceApp.Controllers
         }
 
         [Route("GetSync")]
-        public Sync GetSync(string syncId)
+        [SwaggerResponse(HttpStatusCode.OK, Type = typeof(Sync))]
+        public IHttpActionResult GetSync(string syncId)
         {
-            return _autoTrashCartRepository.GetSync(syncId);
+            var sync = _autoTrashCartRepository.GetSync(syncId);
+            return Ok(sync);
         }
 
         [Route("SetSync")]
+        [ValidateModelState]
         public IHttpActionResult SetSync(Sync sync)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             bool response = _autoTrashCartRepository.SetSync(sync.SyncId, sync.Schedule, sync.Path);
 
             if (response)

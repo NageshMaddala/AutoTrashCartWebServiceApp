@@ -1,6 +1,7 @@
 ﻿using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
 using AutoTrashCartWebServiceApp.CustomHandler;
+using AutoTrashCartWebServiceApp.Filters;
 using Microsoft.Owin.Security.OAuth;
 
 namespace AutoTrashCartWebServiceApp
@@ -14,6 +15,9 @@ namespace AutoTrashCartWebServiceApp
             // Configure Web API to use only bearer token authentication.
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+
+            //captures the time between request and response time lines across all requests!!
+            config.Filters.Add(new RouteTimerFilterAttribute("Global"));
 
             // Web API routes
             config.MapHttpAttributeRoutes();

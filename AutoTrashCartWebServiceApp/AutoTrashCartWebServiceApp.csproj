@@ -277,10 +277,13 @@
     <Compile Include="Controllers\AutoTrashCartMobileController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\AutoTrashCartAdminController.cs" />
+    <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="CustomHandler\GlobalExceptionHandler.cs" />
     <Compile Include="CustomHandler\RequestResponseHandler.cs" />
     <Compile Include="CustomHandler\UnhandledExceptionLogger.cs" />
     <Compile Include="DAL\AutoTrashCartRepository.cs" />
+    <Compile Include="Filters\RouteTimerFilterAttribute.cs" />
+    <Compile Include="Filters\ValidateModelStateAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

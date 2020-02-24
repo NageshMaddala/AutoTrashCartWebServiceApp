@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Web.UI.WebControls;
 using Newtonsoft.Json;
 
@@ -7,6 +8,7 @@ namespace AutoTrashCartWebServiceApp.Models
     public class Path
     {
         [JsonProperty(PropertyName = "pathId")]
+        [Required]
         public string PathId { get; set; }
 
         [JsonProperty(PropertyName = "s")]
